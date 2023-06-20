@@ -222,10 +222,14 @@ func (w Worker) ExportBlock(
 	// Call the block handlers
 	for _, module := range w.modules {
 		if blockModule, ok := module.(modules.BlockModule); ok {
+			w.logger.Debug("Processing block", "module", module.Name())
+			start := time.Now()
 			err = blockModule.HandleBlock(b, r, txs, vals)
 			if err != nil {
 				w.logger.BlockError(module, b, err)
 			}
+			elapsed := time.Since(start)
+			w.logger.Debug("Done Processing", "Time", elapsed)
 		}
 	}
 
