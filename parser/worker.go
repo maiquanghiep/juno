@@ -332,6 +332,8 @@ func (w Worker) handleMessage(index int, msg sdk.Msg, tx *types.Tx) {
 // An error is returned if the write fails.
 func (w Worker) ExportTxs(txs []*types.Tx) error {
 	// handle all transactions inside the block
+	w.logger.Debug("*****Processing transaction**********")
+	start := time.Now()
 	for _, tx := range txs {
 		// save the transaction
 		err := w.saveTx(tx)
@@ -368,5 +370,7 @@ func (w Worker) ExportTxs(txs []*types.Tx) error {
 	}
 	logging.DbLatestHeight.WithLabelValues("db_latest_height").Set(float64(dbLatestHeight))
 
+	elapsed := time.Since(start).Seconds()
+	w.logger.Debug("********Done Processing transaction************", "Time", elapsed)
 	return nil
 }
